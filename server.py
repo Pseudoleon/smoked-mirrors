@@ -82,14 +82,14 @@ def home():
                 if response is None:
                     continue
 
-            response = response.group(1).strip()
-            print(response)
-            sandbox_response = sandbox.get_error(response)
+            code = response.group(1).strip()
+            print(f"====CODE====\n{code}\n====\n")
+            sandbox_response = sandbox.get_error(code)
 
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 
             if sandbox_response is not None:
-                _add_message(response, True)
+                _add_message(code, True)
                 break
 
         redirect(url_for('home'))

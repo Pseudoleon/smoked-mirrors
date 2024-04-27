@@ -53,6 +53,10 @@ def try_compile_restricted(code):
 # Takes in code, returns (line, error class, error message)
 # returns None if there is no error
 def get_error(code):
+    if code.strip().count("\n") <= 1:
+        print(f"WARN: Code detected as single line: {code}")
+        return None
+
     safe_bytecode, has_error, compile_err = try_compile_restricted(code)
     if has_error:
         return compile_err

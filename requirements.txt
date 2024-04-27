@@ -14,6 +14,7 @@ llamaapi==0.1.36
 MarkupSafe==1.1.1
 multidict==6.0.5
 nest-asyncio==1.6.0
+Pygments==2.17.2
 requests==2.31.0
 RestrictedPython==7.1
 urllib3==2.2.1

@@ -23,8 +23,12 @@
                 <h2>Messages</h2>
                 {% if messages %}
                     {% for m in messages %}
-                        <p>"{{ m.message }}"</p>
-                        <p>{{ m.sender }} ({{ m.dt }})</p>
+                        {% if loop.index % 2 == 0 %}
+                            <p>You ({{ m.dt }})</p>
+                        {% else %}
+                            <p>Assistant ({{ m.dt }})</p>
+                        {% endif %}
+                        <p>{{ m.message }}</p>
                     {% endfor %}
                 {% else %}
                     <p>No messages found.</p>

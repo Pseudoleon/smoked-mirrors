@@ -33,7 +33,7 @@ def _get_message(id=None):
 def _add_message(message):
     with sqlite3.connect(app.config['DATABASE']) as conn:
         c = conn.cursor()
-        q = "INSERT INTO messages VALUES (NULL, datetime('now'),?)"
+        q = "INSERT INTO messages VALUES (NULL, datetime('now', 'localtime'),?)"
         c.execute(q, (message, ))
         conn.commit()
         return c.lastrowid
@@ -62,7 +62,7 @@ def home():
         _add_message(msg)
         response = get_llm_response(msg)
         _add_message(response)
-        
+
         redirect(url_for('home'))
 
     return render_template('index.html', messages=_get_message())

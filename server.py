@@ -79,7 +79,7 @@ def home():
             response = response.group(1).strip()
             sandbox_response = sandbox.get_error(response)
 
-            print(f"Code Matched. Evaluation: {sandbox_response}")
+            print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 
             if sandbox_response is not None:
                 _add_message(format(response))

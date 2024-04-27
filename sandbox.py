@@ -70,6 +70,10 @@ def get_error(code):
         print(f"WARN: Code detected as single line: {code}")
         return None
 
+    if "input(" in code.strip():
+        print(f"WARN: input() detected, skipping.." )
+        return None
+
     safe_bytecode, has_error, compile_err = try_compile_restricted(code)
     if has_error:
         return compile_err

@@ -4,10 +4,12 @@ import sqlite3
 from flask import Flask, jsonify, make_response, redirect, render_template, request, session, url_for
 
 import settings
+import json
+from llamaapi import LlamaAPI
 
 app = Flask(__name__)
 app.config.from_object(settings)
-
+llama = LlamaAPI("LL-HBi6JM821yWlnqGnNvW9YjrZ1vDbAKZuv3Itd561KfDnou4Xl61scomeLRNcqbr7")
 
 # Helper functions
 def _get_message(id=None):
@@ -55,11 +57,31 @@ def _delete_message(ids):
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
+        #msg = request.json['message']
+        msg = request.form['message']
         _add_message(request.form['message'], request.form['username'])
+        response = get_llm_response(msg)
+        _add_message(response, request.form['username'])
+
+        print(response)
         redirect(url_for('home'))
 
     return render_template('index.html', messages=_get_message())
 
+def get_llm_response(message):
+    api_request_json = {
+        "messages": [
+            {"role": "user", "content": message},
+        ]
+    }
+
+    # Execute the Request
+    response = llama.run(api_request_json)
+    output = json.dumps(response.json(), indent=2)
+    data = json.loads(output)
+    data = data['choices'][0]['message']['content']
+
+    return data
 
 @app.route('/about')
 def about():

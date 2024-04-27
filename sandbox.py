@@ -4,7 +4,6 @@ from io import StringIO
 from contextlib import redirect_stdout
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
-
 import traceback
 
 class InterpreterError(Exception): pass
@@ -66,6 +65,9 @@ def get_error(code):
         err = check_exec(safe_bytecode)
     
     # print("stdout: ", sout.getvalue())
+    if err[0] == b"ImportError":
+        print("IMPORT ERROR. Consider importing. err: ", err)
+        err = None
     return err
 
 def test_get_error():
@@ -98,47 +100,29 @@ divbz()
 class Account:
     def __init__(self, balance):
         self.balance = balance
-
     def deposit(self, amount):
         self.balance += amount
-
     def withdraw(self, amount):
         if amount > self.balance:
             raise ValueError("Insufficient balance")
         self.balance -= amount
-
     def get_balance(self):
         return self.balance
-
 class Bank:
     def __init__(self):
         self.accounts = {}
-
     def open_account(self, account_name, balance):
         self.accounts[account_name] = Account(balance)
-
     def deposit_to_account(self, account_name, amount):
         self.accounts[account_name].deposit(amount)
-
     def withdraw_from_account(self, account_name, amount):
         self.accounts[account_name].withdraw(amount)
-
     def get_account_balance(self, account_name):
         return self.accounts[account_name].get_balance()
-
-# Test the bank
 bank = Bank()
-
-# Open an account
 bank.open_account("John Doe", 1000)
-
-# Deposit money
 bank.deposit_to_account("John Doe", 500)
-
-# Withdraw money
 bank.withdraw_from_account("John Doe", 300)
-
-# Check the balance
 print(bank.get_account_balance("John Doe"))
 """
     ]

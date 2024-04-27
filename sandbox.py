@@ -65,7 +65,7 @@ def get_error(code):
         err = check_exec(safe_bytecode)
     
     # print("stdout: ", sout.getvalue())
-    if err != None and err[0] == "ImportError":
+    if err != None and err[0] in ["ImportError", "ModuleNotFoundError"]:
         print("IMPORT ERROR. Consider importing. err: ", err)
         err = None
     return err

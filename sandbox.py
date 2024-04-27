@@ -4,7 +4,6 @@ from io import StringIO
 from contextlib import redirect_stdout
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
-
 import traceback
 
 class InterpreterError(Exception): pass

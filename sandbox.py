@@ -6,7 +6,18 @@ from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
 import traceback
 
+INTERPRETER_NAME = "<funny sand>"
+
 class InterpreterError(Exception): pass
+
+def last_stack_from(trace):
+    trace = traceback.extract_tb(trace)
+    i = len(trace) - 1
+    while i >= 0:
+        if trace[i].filename == INTERPRETER_NAME:
+            return trace[i]
+        i -= 1
+    return trace[0]
 
 # Performs exec and checks for errors
 # returns None if there are no errors
@@ -25,7 +36,8 @@ def check_exec(cmd):
         error_class = err.__class__.__name__
         detail = err.args[0]
         cl, exc, tb = sys.exc_info()
-        line_number = traceback.extract_tb(tb)[-1][1]
+        last_interp_frame = last_stack_from(tb)
+        line_number = last_interp_frame[1]
     else:
         return None
     return (error_class, line_number, detail)
@@ -36,7 +48,7 @@ def try_compile_restricted(code):
     bytecode = None
     try:
         # bytecode = compile_restricted(code, '<inline>', 'exec')
-        bytecode = compile(code, '<inline>', 'exec')
+        bytecode = compile(code, INTERPRETER_NAME, 'exec')
     except SyntaxError as err:
         error_class = err.__class__.__name__
         line_number = err.lineno
@@ -44,7 +56,8 @@ def try_compile_restricted(code):
     except Exception as err:
         error_class = err.__class__.__name__
         cl, exc, tb = sys.exc_info()
-        line_number = traceback.extract_tb(tb)[-1][1]
+        last_interp_frame = last_stack_from(tb)
+        line_number = last_interp_frame[1]
         detail = err.args[0]
     else:
         return (bytecode, False, None)
@@ -78,6 +91,8 @@ def test_get_error():
     code_examples = [
 """
 print("awaw)
+print("listen for meows!")
+print("listen for woofs!")
 """,
 """
 def bubble_sort(arr):
@@ -128,6 +143,22 @@ bank.open_account("John Doe", 1000)
 bank.deposit_to_account("John Doe", 500)
 bank.withdraw_from_account("John Doe", 300)
 print(bank.get_account_balance("John Doe"))
+""",
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+def plot_fibonacci(n):
+    x = np.linspace(0, n, n)
+    plt.plot(x, fibonacci(n))
+    plt.xlabel('Number')
+    plt.ylabel('Fibonacci sequence')
+    plt.show()
+plot_fibonacci(10)
 """
     ]
 
@@ -135,7 +166,9 @@ print(bank.get_account_balance("John Doe"))
         ('SyntaxError', 2, 'unterminated string literal (detected at line 2)'),
         None,
         ('ZeroDivisionError', 4, 'division by zero'),
-        None
+        None,
+        ('ValueError', 11, 'x and y must have same first dimension, but have shapes (10,) and (1,)'),
+
     ]
 
     if len(expected_outputs) != len(code_examples):

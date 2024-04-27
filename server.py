@@ -30,14 +30,14 @@ def _get_message(id=None):
             q = "SELECT * FROM messages ORDER BY dt DESC"
             rows = c.execute(q)
 
-        return [{'id': r[0], 'dt': r[1], 'message': r[2] if idx%2 == 1 else format(r[2])} for idx, r in enumerate(rows)]
+        return [{'id': r[0], 'dt': r[1], 'message': r[2], 'formatFlag': r[3]} for r in rows]
 
 
-def _add_message(message):
+def _add_message(message, formatFlag):
     with sqlite3.connect(app.config['DATABASE']) as conn:
         c = conn.cursor()
         q = "INSERT INTO messages VALUES (NULL, datetime('now', 'localtime'),?)"
-        c.execute(q, (message, ))
+        c.execute(q, (message, formatFlag))
         conn.commit()
         return c.lastrowid
 
@@ -62,12 +62,12 @@ def _delete_message(ids):
 def home():
     if request.method == 'POST':
         msg = request.form['message']
-        _add_message(msg)
+        _add_message(msg, False)
         count = 0
         while True:
             count += 1
             if count > 5:
-                _add_message(format("Dogshit prompt. Try again."))
+                _add_message("I am sorry, I cannot help you with that. Please try again.", False)
                 break
 
             response = get_llm_response(msg)
@@ -89,7 +89,7 @@ def home():
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 
             if sandbox_response is not None:
-                _add_message(response)
+                _add_message(response, True)
                 break
 
         redirect(url_for('home'))
@@ -102,7 +102,7 @@ def get_llm_response(message):
             {"role": "system", "content": "You are a system that helps users in debugging Python programs delimited with ``` at start and finish. Keep your messages short. Your task is to provide complex and long python programs with one or more critical errors and no comments. The user's task is to identify the errors in the code and correct them. Do not write code snippets, instead focus on whole, longer programs."},
             {"role": "user", "content": message},
         ],
-        "parameters": {"temperature":0.9}
+        "parameters": {"temperature":4}
     }
 
     # Execute the Request
@@ -168,7 +168,7 @@ def create_message():
     if not request.json or not 'message' in request.json:
         return make_response(jsonify({'error': 'Bad request'}), 400)
 
-    id = _add_message(request.json['message'])
+    id = _add_message(request.json['message'], request.json['formatFlag'])
 
     return get_message_by_id(id), 201
 

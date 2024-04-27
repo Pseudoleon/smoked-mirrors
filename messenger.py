@@ -65,9 +65,11 @@ def home():
         while True:
             response = get_llm_response(msg)
             print(response)
-            response = (re.search(r'```(?:python)?(.*?)```', response, re.DOTALL | re.IGNORECASE))
 
-            if response is None:
+            if (re.search(r'```(?:python)?(.*?)```', response, re.DOTALL | re.IGNORECASE)) is not None:
+                response = (re.search(r'```(?:python)?(.*?)```', response, re.DOTALL | re.IGNORECASE))
+            
+            else:
                 response = (re.search(r'---(?:python)?(.*?)---', response, re.DOTALL | re.IGNORECASE))
                 
                 if response is None:
@@ -89,7 +91,7 @@ def home():
 def get_llm_response(message):
     api_request_json = {
         "messages": [
-            {"role": "system", "content": "You are a system that helps users in debugging Python programs delimited with ``` at start and finish. Your task is to provide complex and long python programs with one or more critical errors and no comments. The user's task is to identify the errors in the code and correct them. Do not write code snippets, instead focus on whole, longer programs."},
+            {"role": "system", "content": "You are a system that helps users in debugging Python programs delimited with ``` at start and finish. Keep your messages short. Your task is to provide complex and long python programs with one or more critical errors and no comments. The user's task is to identify the errors in the code and correct them. Do not write code snippets, instead focus on whole, longer programs."},
             {"role": "user", "content": message},
         ],
         "parameters": {"temperature":0.9}

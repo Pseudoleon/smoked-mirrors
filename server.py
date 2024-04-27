@@ -36,7 +36,7 @@ def _get_message(id=None):
 def _add_message(message, formatFlag):
     with sqlite3.connect(app.config['DATABASE']) as conn:
         c = conn.cursor()
-        q = "INSERT INTO messages VALUES (NULL, datetime('now', 'localtime'),?)"
+        q = "INSERT INTO messages VALUES (NULL, datetime('now', 'localtime'),?,?)"
         c.execute(q, (message, formatFlag))
         conn.commit()
         return c.lastrowid

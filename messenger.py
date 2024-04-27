@@ -9,6 +9,7 @@ import json
 from llamaapi import LlamaAPI
 import re
 import sandbox
+from utils.highlighter import format
 
 app = Flask(__name__)
 app.config.from_object(settings)
@@ -78,7 +79,7 @@ def home():
             response = response.group(1).strip()
 
             if sandbox.get_error(response) is not None:
-                _add_message(response)
+                _add_message(format(response))
                 print(sandbox.get_error(response))
                 break
 
@@ -107,7 +108,7 @@ def get_llm_response(message):
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('test.html', highlighted_code=format())
 
 
 @app.route('/admin', methods=['GET', 'POST'])

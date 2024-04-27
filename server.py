@@ -65,7 +65,7 @@ def home():
         _add_message(msg)
         while True:
             response = get_llm_response(msg)
-            print(response)
+            print(f"========RESPONSE========\n{response}\n========END========")
 
             if (re.search(r'```(?:python)?(.*?)```', response, re.DOTALL | re.IGNORECASE)) is not None:
                 response = (re.search(r'```(?:python)?(.*?)```', response, re.DOTALL | re.IGNORECASE))
@@ -77,14 +77,13 @@ def home():
                     continue
 
             response = response.group(1).strip()
-            sandboxResponse = sandbox.get_error(response)
+            sandbox_response = sandbox.get_error(response)
 
-            if sandboxResponse is not None:
+            print(f"Code Matched. Evaluation: {sandbox_response}")
+
+            if sandbox_response is not None:
                 _add_message(format(response))
-                print(sandbox.get_error(response))
                 break
-
-            print(sandbox.get_error(response))
 
         redirect(url_for('home'))
 

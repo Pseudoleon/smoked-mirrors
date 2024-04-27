@@ -63,7 +63,13 @@ def home():
     if request.method == 'POST':
         msg = request.form['message']
         _add_message(msg)
+        count = 0
         while True:
+            count += 1
+            if count > 5:
+                _add_message(format("Dogshit prompt. Try again."))
+                break
+
             response = get_llm_response(msg)
             print(f"========RESPONSE========\n{response}\n========END========")
 
@@ -77,6 +83,7 @@ def home():
                     continue
 
             response = response.group(1).strip()
+            print(response)
             sandbox_response = sandbox.get_error(response)
 
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")

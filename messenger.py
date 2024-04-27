@@ -27,14 +27,14 @@ def _get_message(id=None):
             q = "SELECT * FROM messages ORDER BY dt DESC"
             rows = c.execute(q)
 
-        return [{'id': r[0], 'dt': r[1], 'message': r[2], 'sender': r[3]} for r in rows]
+        return [{'id': r[0], 'dt': r[1], 'message': r[2]} for r in rows]
 
 
-def _add_message(message, sender):
+def _add_message(message):
     with sqlite3.connect(app.config['DATABASE']) as conn:
         c = conn.cursor()
-        q = "INSERT INTO messages VALUES (NULL, datetime('now'),?,?)"
-        c.execute(q, (message, sender))
+        q = "INSERT INTO messages VALUES (NULL, datetime('now'),?)"
+        c.execute(q, (message, ))
         conn.commit()
         return c.lastrowid
 
@@ -58,13 +58,11 @@ def _delete_message(ids):
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        #msg = request.json['message']
         msg = request.form['message']
-        _add_message(request.form['message'], request.form['username'])
+        _add_message(msg)
         response = get_llm_response(msg)
-        _add_message(response, request.form['username'])
-
-        print(response)
+        _add_message(response)
+        
         redirect(url_for('home'))
 
     return render_template('index.html', messages=_get_message())
@@ -136,10 +134,10 @@ def get_message_by_id(id=None):
 
 @app.route('/messages/api', methods=['POST'])
 def create_message():
-    if not request.json or not 'message' in request.json or not 'sender' in request.json:
+    if not request.json or not 'message' in request.json:
         return make_response(jsonify({'error': 'Bad request'}), 400)
 
-    id = _add_message(request.json['message'], request.json['sender'])
+    id = _add_message(request.json['message'])
 
     return get_message_by_id(id), 201
 

@@ -7,6 +7,7 @@ from flask import Flask, jsonify, make_response, redirect, render_template, requ
 import settings
 import json
 from llamaapi import LlamaAPI
+import re
 
 app = Flask(__name__)
 app.config.from_object(settings)
@@ -60,7 +61,9 @@ def home():
     if request.method == 'POST':
         msg = request.form['message']
         _add_message(msg)
-        response = get_llm_response(msg)
+        LLMInput = "The answer to this prompt is exclusively code in Python. I want you to write a program that has one or more errors. The focus of this task is for the user to identify the errors in the code and correct them. Do not write code snippets, instead focus on whole programs. The specific category of Python code is: " + msg
+        response = get_llm_response(LLMInput)
+        response = (re.search(r'```(.*?)```', response, re.DOTALL)).group(1).strip()
         _add_message(response)
 
         redirect(url_for('home'))

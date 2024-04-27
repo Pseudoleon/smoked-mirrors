@@ -30,7 +30,7 @@ def _get_message(id=None):
             q = "SELECT * FROM messages ORDER BY dt DESC"
             rows = c.execute(q)
 
-        return [{'id': r[0], 'dt': r[1], 'message': r[2]} for r in rows]
+        return [{'id': r[0], 'dt': r[1], 'message': r[2] if idx%2 == 1 else format(r[2])} for idx, r in enumerate(rows)]
 
 
 def _add_message(message):
@@ -82,7 +82,7 @@ def home():
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 
             if sandbox_response is not None:
-                _add_message(format(response))
+                _add_message(response)
                 break
 
         redirect(url_for('home'))

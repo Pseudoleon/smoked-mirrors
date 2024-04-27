@@ -77,8 +77,9 @@ def home():
                     continue
 
             response = response.group(1).strip()
+            sandboxResponse = sandbox.get_error(response)
 
-            if sandbox.get_error(response) is not None:
+            if sandboxResponse is not None:
                 _add_message(format(response))
                 print(sandbox.get_error(response))
                 break

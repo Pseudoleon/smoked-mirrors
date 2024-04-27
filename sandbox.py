@@ -42,12 +42,11 @@ def get_error(code):
 
 def test_get_error():
     code = """
-def testing():
-    aw = 8 / 0
-print("all okay?")
-testing()
+import os
+
+print("awaw")
     """
-    
+
     get_error(code)
 
 

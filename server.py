@@ -8,7 +8,7 @@ import settings
 import json
 from llamaapi import LlamaAPI
 import re
-import sandbox
+import run_sandbox
 from utils.highlighter import format
 
 app = Flask(__name__)
@@ -68,6 +68,7 @@ def home():
             count += 1
             if count > 5:
                 _add_message("I am sorry, I cannot help you with that. Please try again.", False)
+                print("===========COULDN'T FIND PROPER CODE IN TIME===========")
                 break
 
             response = get_llm_response(msg)
@@ -84,7 +85,7 @@ def home():
 
             code = response.group(1).strip()
             print(f"====CODE====\n{code}\n====\n")
-            sandbox_response = sandbox.get_error(code)
+            sandbox_response = run_sandbox.get_error(code)
 
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 

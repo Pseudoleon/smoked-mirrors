@@ -100,7 +100,7 @@ def home():
     return render_template('index.html', messages=_get_message())
 
 def delete_comments(code):
-    return re.sub(r'(?m)^\s*#.*(?:\n\s*#.*)*', '', code)   
+    return re.sub(r'(?m)^\s*#.*$|(?<=\s)#.*$', '', code)   
 
 def reduce_empty_lines(code):
     return code.replace(":\n\n", ":\n")

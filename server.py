@@ -100,9 +100,10 @@ def home():
     return render_template('index.html', messages=_get_message())
 
 def delete_comments(code):
-    return re.sub(r'#.*?(?=\n|$)', '', code)   
+    return re.sub(r'(?m)^\s*#.*(?:\n\s*#.*)*', '', code)   
 
 def reduce_empty_lines(code):
+    return code
     return re.sub(r'\n+', '\n', code)
 
 def get_llm_response(message):

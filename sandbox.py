@@ -9,6 +9,7 @@ from RestrictedPython import safe_globals
 import traceback
 
 INTERPRETER_NAME = "<funny sand>"
+INTERPRETER_TIMEOUT = 3                 # seconds
 
 class InterpreterError(Exception): pass
 
@@ -29,7 +30,7 @@ def check_exec(cmd):
     # "bubble_sort is not defined" if local_vars is supplied
 
     try:
-        exec(cmd, global_vars)
+        exec(cmd, globals())
     except SyntaxError as err:
         error_class = err.__class__.__name__
         detail = err.args[0]
@@ -67,7 +68,7 @@ def try_compile_restricted(code):
 
 def get_error(code):
     try:
-        retval = func_timeout(1, get_error_timeless, args=(code,))
+        retval = func_timeout(INTERPRETER_TIMEOUT, get_error_timeless, args=(code,))
         return retval
     except FunctionTimedOut:
         print("===exec didn't complete in time.")

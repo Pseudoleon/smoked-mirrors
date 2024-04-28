@@ -28,9 +28,10 @@ def last_stack_from(trace):
 def check_exec(cmd):
     global_vars = {}
     # "bubble_sort is not defined" if local_vars is supplied
+    gls = globals().copy()
 
     try:
-        exec(cmd, globals())
+        exec(cmd, gls)
     except SyntaxError as err:
         error_class = err.__class__.__name__
         detail = err.args[0]

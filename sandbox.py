@@ -1,3 +1,4 @@
+from func_timeout import func_timeout, FunctionTimedOut
 import re
 import os
 import sys
@@ -64,9 +65,18 @@ def try_compile_restricted(code):
         return (bytecode, False, None)
     return (None, True, (error_class, line_number, detail))  
 
+def get_error(code):
+    try:
+        retval = func_timeout(1, get_error_timeless, args=(code,))
+        return retval
+    except FunctionTimedOut:
+        print("===exec didn't complete in time.")
+        return None
+    return None
+
 # Takes in code, returns (error class, line, error message)
 # returns None if there is no error
-def get_error(code):
+def get_error_timeless(code):
     if code.strip().count("\n") <= 1:
         print(f"WARN: Code detected as single line: {code}")
         return None
@@ -170,6 +180,11 @@ def plot_fibonacci(n):
     plt.ylabel('Fibonacci sequence')
     plt.show()
 plot_fibonacci(10)
+""",
+"""
+print("give input!")
+while True:
+    pass
 """
     ]
 
@@ -179,7 +194,7 @@ plot_fibonacci(10)
         ('ZeroDivisionError', 4, 'division by zero'),
         None,
         ('ValueError', 11, 'x and y must have same first dimension, but have shapes (10,) and (1,)'),
-
+        None
     ]
 
     if len(expected_outputs) != len(code_examples):

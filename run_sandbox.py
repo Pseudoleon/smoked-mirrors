@@ -2,18 +2,35 @@ import subprocess
 import sys
 
 def get_error(code):
+    if code.strip().count("\n") <= 1:
+        print(f"WARN: Code detected as single line: {code}")
+        return None
+
+    unsafe_code = ["input(", "os.system(", "open("]
+    for unsf in unsafe_code:
+        if unsf in code.strip():
+            print(f"WARN: -> {unsf} <-  detected, skipping.." )
+            return None
+
     proc = subprocess.Popen(
-        [sys.executable, "./sandboxed.py", code],
+        ["./env/bin/python", "sandboxed.py", code],
         stdout=subprocess.PIPE
     )
 
     out_lines = proc.stdout.readlines()
     proc.kill()
     
-    if out_lines[0].strip().decode() == "None":
-        return None
-    else:
-        return (out_lines[0].strip().decode(), int(out_lines[1].strip().decode()), out_lines[2].strip().decode())
+    err = None
+
+    if out_lines[0].strip().decode() != "None":
+        err = (out_lines[0].strip().decode(), int(out_lines[1].strip().decode()), out_lines[2].strip().decode())
+
+    if err != None and err[0] in ["ImportError", "ModuleNotFoundError"]:
+        print("IMPORT ERROR. Consider importing. err: ", err)
+        err = None
+    
+    # print(out_lines)
+    return err
 
 
 def test_get_error():
@@ -88,6 +105,11 @@ def plot_fibonacci(n):
     plt.ylabel('Fibonacci sequence')
     plt.show()
 plot_fibonacci(10)
+""",
+"""
+import os
+os.system("/bin/sh")
+print("OKAY")
 """
     ]
 
@@ -97,7 +119,7 @@ plot_fibonacci(10)
         ('ZeroDivisionError', 4, 'division by zero'),
         None,
         ('ValueError', 11, 'x and y must have same first dimension, but have shapes (10,) and (1,)'),
-
+        None
     ]
 
     if len(expected_outputs) != len(code_examples):

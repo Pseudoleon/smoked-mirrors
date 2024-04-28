@@ -1,4 +1,3 @@
-
 import os
 import sys
 from io import StringIO
@@ -78,19 +77,14 @@ def try_compile_restricted(code):
 # Takes in code, returns (line, error class, error message)
 # returns None if there is no error
 def get_error(code):
-    if code.strip().count("\n") <= 1:
-        print(f"WARN: Code detected as single line: {code}")
-        return None
-
-    if "input(" in code.strip():
-        print(f"WARN: input() detected, skipping.." )
-        return None
+    # drop_perms()
+    # allows simple programs but disables some external libraries like numpy
 
     safe_bytecode, has_error, compile_err = try_compile_restricted(code)
     if has_error:
         return compile_err
 
-    # need to redirect stdout
+    # need to redirect stdout of the code
     sout = StringIO()
     err = None
 
@@ -98,9 +92,6 @@ def get_error(code):
         err = check_exec(safe_bytecode)
     
     # print("stdout: ", sout.getvalue())
-    if err != None and err[0] in ["ImportError", "ModuleNotFoundError"]:
-        print("IMPORT ERROR. Consider importing. err: ", err)
-        err = None
     return err
 
 if __name__ == "__main__":
@@ -110,4 +101,3 @@ if __name__ == "__main__":
     else:
         for x in ret:
             print(x)
-    

@@ -6,3 +6,4 @@ env
 htmlcov
 testing
 test.py
+venv

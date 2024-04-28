@@ -51,7 +51,7 @@ def _get_formatted_message(n):
             print("index err")
             return None
         
-        g = sandbox.check_exec(r[2])
+        g = sandbox.get_error(r[2])
         print(f"Line: {g}")
         return {'id': r[0], 'dt': r[1], 'line': g[1]}
 

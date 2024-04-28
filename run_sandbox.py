@@ -13,7 +13,7 @@ def get_error(code):
             return None
 
     proc = subprocess.Popen(
-        ["./env/bin/python", "sandboxed.py", code],
+        [sys.executable, "sandboxed.py", code],
         stdout=subprocess.PIPE
     )
 
@@ -110,6 +110,15 @@ plot_fibonacci(10)
 import os
 os.system("/bin/sh")
 print("OKAY")
+""",
+"""
+# Define a function to calculate the area of a circle
+def circle_area(radius):
+    # Critical error: missing return statement
+    pass
+
+# Call the function with a radius of 5
+print(circle_area(5))
 """
     ]
 
@@ -119,6 +128,7 @@ print("OKAY")
         ('ZeroDivisionError', 4, 'division by zero'),
         None,
         ('ValueError', 11, 'x and y must have same first dimension, but have shapes (10,) and (1,)'),
+        None,
         None
     ]
 

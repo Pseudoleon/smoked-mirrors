@@ -67,7 +67,7 @@ def home():
         while True:
             count += 1
             if count > 5:
-                _add_message("I am sorry, I cannot help you with that. Please try again.", False)
+                _add_message("Proper code couldn't be generated, please try again.", False)
                 print("===========COULDN'T FIND PROPER CODE IN TIME===========")
                 break
 
@@ -100,8 +100,8 @@ def home():
 def get_llm_response(message):
     api_request_json = {
         "messages": [
-            {"role": "system", "content": "You are a system that helps users in debugging Python programs delimited with ``` at start and finish. Keep your messages short. Your task is to provide complex and long python programs with one or more critical errors and no comments. The user's task is to identify the errors in the code and correct them. Do not write code snippets, instead focus on whole, longer programs."},
-            {"role": "user", "content": message},
+            {"role": "system", "content": "You are Johnny who writes python programs that always have runtime errors. I will ask you to write python code on a certain topic, make sure it is long and has a runtime error."},
+            {"role": "user", "content": f"Write a long python program with a bug in it that is related to: {message}. Make sure its not generic. Start and end the code with ```"},
         ],
         "parameters": {"temperature":4}
     }

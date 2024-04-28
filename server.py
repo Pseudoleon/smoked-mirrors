@@ -40,11 +40,11 @@ def _get_formatted_message(n):
         c = conn.cursor()
 
         n = int(n)  # Ensure that we have a valid id value to query
-        q = "SELECT * FROM messages WHERE formatFlag = 1 ORDER BY id ASC"
+        q = "SELECT * FROM messages WHERE formatFlag = 1 ORDER BY id DESC"
         try:
             r = list(c.execute(q))
-            print(r)
-            r = r[n-1]
+            #print(r)
+            r = r[n]
             print(r)
         except IndexError: # Potentially needs more exceptions here..?
             print("index err")
@@ -198,7 +198,7 @@ def get_message_by_id(id=None):
 @app.route('/exe/api/<int:id>', methods=['GET'])
 def get_exe_by_id(id):
     print(f"Playing with {id}")
-    message = _get_formatted_message(id-1)
+    message = _get_formatted_message(id)
     if not message:
         return make_response(jsonify({'error': 'Not found'}), 404)
 

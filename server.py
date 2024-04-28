@@ -57,8 +57,8 @@ def _get_formatted_message(n):
         # print("=====EXITING======")
         g = sandbox.get_error(r[2])
         print(f"(async) Line: {g}\n---")
-        resolved_blocks[(r[0], n)] = g
-        
+        resolved_blocks[(g[1], n)] = g
+
         return {'id': r[0], 'dt': r[1], 'line': g[1]}
 
 def _add_message(message, formatFlag):
@@ -224,20 +224,20 @@ def create_message():
 
 @app.route('/verify/api', methods=['POST'])
 def verify_message():
-    print(request.data)
+    json = request.get_json(force=True)
     print("Is JSON? " + str(request.is_json))
-    if not request.json or not 'line' in request.json or not 'block_id' in request.json or not 'message' in request.json:
+    if not json or not 'line' in json or not 'block_id' in json or not 'message' in json:
         return make_response(jsonify({'error': 'Bad request'}), 400)
     
-    line = request.json["line"]
-    bid = request.json["block_id"]
+    line = json["line"]
+    bid = json["block_id"]
     res = resolved_blocks.get((line,bid), False)
     if not res:
-        return make_response(jsonify({'error': 'Codeblock too old'}), 400)
+        return make_response(jsonify({'error': 'Codeblock too old'}), 401)
 
     err_class, err_line, err_msg = res # (error class, line in snippet, error message)
     if line == err_line:
-        _add_message(request.json['message'], formatFlag=False)
+        _add_message(json['message'], formatFlag=False)
         _add_message(f"Correct! The error was {err_class}: {err_msg}", formatFlag=False)
     #else: # Optional: Send incorrect messages
     #    _add_message(f"Incorrect.", formatFlag=False)

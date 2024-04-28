@@ -53,8 +53,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     method: "POST",
                     mode: "no-cors",
                     headers: {
-                        'Content-type':'application/json',
-                        'Accept':'application/json'
+                        'Content-Type':'application/json'
                     },
                     body: JSON.stringify(
                         {

@@ -30,10 +30,11 @@
                     {% for m in messages %}
                         {% if loop.index % 2 == 0 %}
                             <p>You ({{ m.dt }})</p>
+                            <p>{{ m.message }}</p>
                         {% else %}
                             <p>Assistant ({{ m.dt }})</p>
+                            <p>{{ m.message|safe }}</p>
                         {% endif %}
-                        <p>{{ m.message|safe }}</p>
                     {% endfor %}
                 {% else %}
                     <p>No messages found.</p>

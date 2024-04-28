@@ -64,7 +64,7 @@ def try_compile_restricted(code):
         return (bytecode, False, None)
     return (None, True, (error_class, line_number, detail))  
 
-# Takes in code, returns (line, error class, error message)
+# Takes in code, returns (error class, line, error message)
 # returns None if there is no error
 def get_error(code):
     if code.strip().count("\n") <= 1:

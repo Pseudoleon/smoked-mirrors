@@ -30,7 +30,7 @@ def _get_message(id=None):
             q = "SELECT * FROM messages ORDER BY dt DESC"
             rows = c.execute(q)
 
-        return [{'id': r[0], 'dt': r[1], 'message': r[2], 'formatFlag': r[3]} for r in rows]
+        return [{'id': r[0], 'dt': r[1], 'message': r[2] if r[3] == 0 else format(r[2])} for r in rows]
 
 
 def _add_message(message, formatFlag):
@@ -205,4 +205,4 @@ if __name__ == '__main__':
             print("Couldn't execute the SQL, exiting...")
             raise
 
-    app.run(host='0.0.0.0')
+    app.run()

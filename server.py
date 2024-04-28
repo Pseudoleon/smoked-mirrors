@@ -34,21 +34,23 @@ def _get_message(id=None):
 
 
 def _get_formatted_message(n):
-    """Return n-th formatted message"""
+    """Return n-th formatted message, starting from 0"""
     with sqlite3.connect(app.config['DATABASE']) as conn:
         print('format')
         c = conn.cursor()
 
         n = int(n)  # Ensure that we have a valid id value to query
-        q = "SELECT * FROM messages WHERE formatFlag = 1 ORDER BY id DESC"
+        q = "SELECT * FROM messages WHERE formatFlag == 1 ORDER BY id DESC"
         try:
             r = list(c.execute(q))
             #print(r)
+            print(f"{n=}")
             r = r[n]
-            print(r)
+            #print(r)
         except IndexError: # Potentially needs more exceptions here..?
             print("index err")
             return None
+        
         g = sandbox.check_exec(r[2])
         print(f"Line: {g}")
         return {'id': r[0], 'dt': r[1], 'line': g[1]}
@@ -197,7 +199,7 @@ def get_message_by_id(id=None):
 
 @app.route('/exe/api/<int:id>', methods=['GET'])
 def get_exe_by_id(id):
-    print(f"Playing with {id}")
+    print(f"Using {id}")
     message = _get_formatted_message(id)
     if not message:
         return make_response(jsonify({'error': 'Not found'}), 404)

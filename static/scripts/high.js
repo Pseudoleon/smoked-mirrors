@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     codeLines.forEach(function(line) {
         let lineId = line.getAttribute('id');
         if (lineId == "codeblockline-1") {
+            targetLine = -1;
             let addr = 'http://127.0.0.1:5000/exe/api/' + counter;
             console.log(addr)
-            console.log()
             fetch(addr, {
                 method: 'GET',
                 mode: "no-cors"
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Handle response from server
                 targetLine = data["message"]["line"];
-                console.log(targetLine);
+                console.log("Target line: " + targetLine);
             })
             .catch(error => {
                 console.error('Error:', error);

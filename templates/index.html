@@ -29,10 +29,10 @@
                 {% if messages %}
                     {% for m in messages %}
                         {% if loop.index % 2 == 0 %}
-                            <p>You ({{ m.dt }})</p>
+                            <p><b>You</b> ({{ m.dt }})</p>
                             <p>{{ m.message }}</p>
                         {% else %}
-                            <p>Assistant ({{ m.dt }})</p>
+                            <p><b>Assistant</b> ({{ m.dt }})</p>
                             <p>{{ m.message|safe }}</p>
                         {% endif %}
                     {% endfor %}

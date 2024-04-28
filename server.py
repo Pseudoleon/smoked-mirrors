@@ -26,11 +26,11 @@ def _get_message(id=None):
 
         if id:
             id = int(id)  # Ensure that we have a valid id value to query
-            q = "SELECT * FROM messages WHERE id=? ORDER BY dt DESC"
+            q = "SELECT * FROM messages WHERE id=? ORDER BY id DESC"
             rows = c.execute(q, (id,))
 
         else:
-            q = "SELECT * FROM messages ORDER BY dt DESC"
+            q = "SELECT * FROM messages ORDER BY id DESC"
             rows = c.execute(q)
 
         return [{'id': r[0], 'dt': r[1], 'message': r[2] if r[3] == 0 else format(r[2])} for r in rows]

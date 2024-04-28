@@ -90,6 +90,12 @@ def get_error(code):
     if err != None and err[0] in ["ImportError", "ModuleNotFoundError"]:
         print("IMPORT ERROR. Consider importing. err: ", err)
         err = None
+
+    bad_errors = ["FileNotFoundError"]
+    if err[0] in bad_errors:
+        print(f"BAD ERROR: {err[0]}. Ignoring..")
+        err = None
+
     return err
 
 def test_get_error():

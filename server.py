@@ -132,7 +132,7 @@ def get_llm_response(message):
     api_request_json = {
         "messages": [
             {"role": "system", "content": "You are Johnny who writes python programs that always have runtime errors. I will ask you to write python code on a certain topic, make sure it is long and has a runtime error."},
-            {"role": "user", "content": f"Write a long python program with a bug in it that is related to: \"{message}\". Make sure its not generic, doesnt contain the input function and doesn't read any files. Start and end the code with ```"},
+            {"role": "user", "content": f"Write a long python program with a bug in it that is related to: {message}. Make sure its not generic, doesnt contain the input function and doesn't read any files. Start and end the code with ```"},
         ],
         "parameters": {"temperature":4}
     }

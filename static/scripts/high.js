@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (lineId == "codeblockline-1") {
             counter++;
             targetLine = -1;
-            let addr = 'http://localhost:5000/exe/api/' + counter;
+            let addr = 'http://127.0.0.1:5000/exe/api/' + counter;
             console.log(addr);
             await fetch(addr, {
                 method: 'GET',
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (id == ("codeblockline-" + targ)) {
                 style = "bg-success";
                 
-                fetch("http://localhost:5000/verify/api", {
+                fetch("http://127.0.0.1:5000/verify/api", {
                     method: "POST",
                     mode: "no-cors",
                     headers: {

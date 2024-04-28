@@ -29,8 +29,10 @@
                 {% if messages %}
                     {% for m in messages %}
                         {% if loop.index % 2 == 0 %}
+                            <div class="card bg-dark">
                             <p><b>You</b> ({{ m.dt }})</p>
                             <p>{{ m.message }}</p>
+                        </div>
                         {% else %}
                             <p><b>Assistant</b> ({{ m.dt }})</p>
                             <p>{{ m.message|safe }}</p>

@@ -15,6 +15,9 @@ app = Flask(__name__)
 app.config.from_object(settings)
 llama = LlamaAPI("LL-HBi6JM821yWlnqGnNvW9YjrZ1vDbAKZuv3Itd561KfDnou4Xl61scomeLRNcqbr7")
 
+# Global variables
+resolved_blocks = {}
+
 # Helper functions
 def _get_message(id=None):
     """Return a list of message objects (as dicts)"""
@@ -54,6 +57,8 @@ def _get_formatted_message(n):
         # print("=====EXITING======")
         g = sandbox.get_error(r[2])
         print(f"(async) Line: {g}\n---")
+        resolved_blocks[(r[0], n)] = g
+        
         return {'id': r[0], 'dt': r[1], 'line': g[1]}
 
 def _add_message(message, formatFlag):
@@ -216,6 +221,28 @@ def create_message():
 
     return get_message_by_id(id), 201
 
+
+@app.route('/verify/api', methods=['POST'])
+def verify_message():
+    print(request.data)
+    print("Is JSON? " + str(request.is_json))
+    if not request.json or not 'line' in request.json or not 'block_id' in request.json or not 'message' in request.json:
+        return make_response(jsonify({'error': 'Bad request'}), 400)
+    
+    line = request.json["line"]
+    bid = request.json["block_id"]
+    res = resolved_blocks.get((line,bid), False)
+    if not res:
+        return make_response(jsonify({'error': 'Codeblock too old'}), 400)
+
+    err_class, err_line, err_msg = res # (error class, line in snippet, error message)
+    if line == err_line:
+        _add_message(request.json['message'], formatFlag=False)
+        _add_message(f"Correct! The error was {err_class}: {err_msg}", formatFlag=False)
+    #else: # Optional: Send incorrect messages
+    #    _add_message(f"Incorrect.", formatFlag=False)
+
+    return "OK", 200
 
 @app.route('/messages/api/<int:id>', methods=['DELETE'])
 def delete_message_by_id(id):

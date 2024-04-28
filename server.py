@@ -85,6 +85,7 @@ def home():
 
             code = response.group(1).strip()
             code = delete_comments(code)
+            code = reduce_empty_lines(code)
             print(f"====CODE====\n{code}\n====\n")
             sandbox_response = sandbox.get_error(code)
 
@@ -101,11 +102,14 @@ def home():
 def delete_comments(code):
     return re.sub(r'#.*?(?=\n|$)', '', code)   
 
+def reduce_empty_lines(code):
+    return re.sub(r'\n+', '\n', code)
+
 def get_llm_response(message):
     api_request_json = {
         "messages": [
             {"role": "system", "content": "You are Johnny who writes python programs that always have runtime errors. I will ask you to write python code on a certain topic, make sure it is long and has a runtime error."},
-            {"role": "user", "content": f"Write a long python program with a bug in it that is related to: \"{message}\". Make sure its not generic, and doesnt contain the input function. Start and end the code with ```"},
+            {"role": "user", "content": f"Write a long python program with a bug in it that is related to: \"{message}\". Make sure its not generic, doesnt contain the input function and doesn't read any files. Start and end the code with ```"},
         ],
         "parameters": {"temperature":4}
     }

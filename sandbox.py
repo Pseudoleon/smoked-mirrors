@@ -92,7 +92,7 @@ def get_error(code):
         err = None
 
     bad_errors = ["FileNotFoundError"]
-    if err[0] in bad_errors:
+    if err != None and err[0] in bad_errors:
         print(f"BAD ERROR: {err[0]}. Ignoring..")
         err = None
 

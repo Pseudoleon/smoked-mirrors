@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (id == ("codeblockline-" + targ)) {
                 style = "bg-success";
                 
-                await fetch("http://localhost:5000/verify/api", {
+                fetch("http://localhost:5000/verify/api", {
                     method: "POST",
                     mode: "no-cors",
                     headers: {
@@ -62,19 +62,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                             block_id: parseInt(messageID, 10),
                             message: "Line " + targ + " is wrong"
                         })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Handle response from server
-                    targetLine = data["message"]["line"];
-                    console.log("Target line: " + targetLine);
-    
-                    // console.log("setting " + counter + " to " + targetLine);
-                    correctLineMap[counter] = targetLine;
-                    // console.log(correctLineMap);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
                 });
                 
             }

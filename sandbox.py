@@ -1,3 +1,4 @@
+import re
 import os
 import sys
 from io import StringIO
@@ -61,7 +62,7 @@ def try_compile_restricted(code):
         detail = err.args[0]
     else:
         return (bytecode, False, None)
-    return (None, True, (error_class, line_number, detail))
+    return (None, True, (error_class, line_number, detail))  
 
 # Takes in code, returns (line, error class, error message)
 # returns None if there is no error

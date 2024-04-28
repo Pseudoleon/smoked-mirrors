@@ -123,7 +123,9 @@ def delete_comments(code):
     return re.sub(r'(?m)^\s*#.*$|(?<=\s)#.*$', '', code)   
 
 def reduce_empty_lines(code):
-    return code.replace(":\n\n", ":\n")
+    code = re.sub(r'\n{3,}', "\n\n", code)
+    code = code.replace(":\n\n", ":\n")
+    return code
     # return re.sub(r'\n+', '\n', code)
 
 def get_llm_response(message):

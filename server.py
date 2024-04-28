@@ -33,6 +33,26 @@ def _get_message(id=None):
         return [{'id': r[0], 'dt': r[1], 'message': r[2] if r[3] == 0 else format(r[2])} for r in rows]
 
 
+def _get_formatted_message(n):
+    """Return n-th formatted message"""
+    with sqlite3.connect(app.config['DATABASE']) as conn:
+        print('format')
+        c = conn.cursor()
+
+        n = int(n)  # Ensure that we have a valid id value to query
+        q = "SELECT * FROM messages WHERE formatFlag = 1 ORDER BY id ASC"
+        try:
+            r = list(c.execute(q))
+            print(r)
+            r = r[n-1]
+            print(r)
+        except IndexError: # Potentially needs more exceptions here..?
+            print("index err")
+            return None
+        g = sandbox.check_exec(r[2])
+        print(f"Line: {g}")
+        return {'id': r[0], 'dt': r[1], 'line': g[1]}
+
 def _add_message(message, formatFlag):
     with sqlite3.connect(app.config['DATABASE']) as conn:
         c = conn.cursor()
@@ -92,7 +112,7 @@ def home():
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 
             if sandbox_response is not None:
-                _add_message(code, True)
+                lastrowid = _add_message(code, True)
                 break
 
         redirect(url_for('home'))
@@ -172,6 +192,15 @@ def get_message_by_id(id=None):
 
     return jsonify({'messages': messages})
 
+
+@app.route('/exe/api/<int:id>', methods=['GET'])
+def get_exe_by_id(id):
+    print(f"Playing with {id}")
+    message = _get_formatted_message(id-1)
+    if not message:
+        return make_response(jsonify({'error': 'Not found'}), 404)
+
+    return jsonify({'message': message})
 
 @app.route('/messages/api', methods=['POST'])
 def create_message():

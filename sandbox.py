@@ -31,7 +31,7 @@ def check_exec(cmd):
     gls = globals().copy()
 
     try:
-        exec(cmd, gls)
+        exec(cmd, global_vars)
     except SyntaxError as err:
         error_class = err.__class__.__name__
         detail = err.args[0]

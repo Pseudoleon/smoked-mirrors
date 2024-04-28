@@ -36,23 +36,24 @@ def _get_message(id=None):
 def _get_formatted_message(n):
     """Return n-th formatted message, starting from 0"""
     with sqlite3.connect(app.config['DATABASE']) as conn:
-        print('format')
         c = conn.cursor()
-
+        # print("======ENTERING=====")
         n = int(n)  # Ensure that we have a valid id value to query
         q = "SELECT * FROM messages WHERE formatFlag == 1 ORDER BY id DESC"
         try:
             r = list(c.execute(q))
-            #print(r)
-            print(f"{n=}")
+            # print(f"DB: {r}")
             r = r[n]
-            #print(r)
+            # print(f"The id: {r}")
         except IndexError: # Potentially needs more exceptions here..?
             print("index err")
             return None
+        except Exception as e:
+            print("error: ", e)
         
+        # print("=====EXITING======")
         g = sandbox.get_error(r[2])
-        print(f"Line: {g}")
+        print(f"(async) Line: {g}\n---")
         return {'id': r[0], 'dt': r[1], 'line': g[1]}
 
 def _add_message(message, formatFlag):
@@ -122,12 +123,12 @@ def home():
     return render_template('index.html', messages=_get_message())
 
 def delete_comments(code):
-    return re.sub(r'(?m)^\s*#.*$|(?<=\s)#.*$', '', code)   
+    return re.sub(r'(?m)^\s*#.*$|(?<=\s)#.*$', '', code).strip()
 
 def reduce_empty_lines(code):
     code = re.sub(r'\n{3,}', "\n\n", code)
     code = code.replace(":\n\n", ":\n")
-    return code
+    return code.strip()
     # return re.sub(r'\n+', '\n', code)
 
 def get_llm_response(message):
@@ -199,7 +200,7 @@ def get_message_by_id(id=None):
 
 @app.route('/exe/api/<int:id>', methods=['GET'])
 def get_exe_by_id(id):
-    print(f"Using {id}")
+    print(f"\n---Fetching code with id {id}")
     message = _get_formatted_message(id)
     if not message:
         return make_response(jsonify({'error': 'Not found'}), 404)

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (lineId == "codeblockline-1") {
             counter++;
             targetLine = -1;
-            let addr = 'http://127.0.0.1:5000/exe/api/' + counter;
+            let addr = 'http://localhost:5000/exe/api/' + counter;
             console.log(addr);
             await fetch(addr, {
                 method: 'GET',

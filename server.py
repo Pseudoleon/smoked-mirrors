@@ -8,7 +8,7 @@ import settings
 import json
 from llamaapi import LlamaAPI
 import re
-import run_sandbox
+import sandbox
 from utils.highlighter import format
 
 app = Flask(__name__)
@@ -85,7 +85,7 @@ def home():
 
             code = response.group(1).strip()
             print(f"====CODE====\n{code}\n====\n")
-            sandbox_response = run_sandbox.get_error(code)
+            sandbox_response = sandbox.get_error(code)
 
             print(f"=====CODE MATCHED. EVALUATION: {sandbox_response}=====\n")
 

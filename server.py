@@ -103,8 +103,8 @@ def delete_comments(code):
     return re.sub(r'(?m)^\s*#.*(?:\n\s*#.*)*', '', code)   
 
 def reduce_empty_lines(code):
-    return code
-    return re.sub(r'\n+', '\n', code)
+    return code.replace(":\n\n", ":\n")
+    # return re.sub(r'\n+', '\n', code)
 
 def get_llm_response(message):
     api_request_json = {
